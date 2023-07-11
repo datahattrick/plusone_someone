@@ -58,7 +58,7 @@ func main() {
 
 	v1.Delete("/posts/:postid", func(c *fiber.Ctx) error { return c.SendString("Deleting a post") })
 
-	//Other endpoint hits
+	//Other endpoint hits on the api
 	api.All("*", func(c *fiber.Ctx) error { return c.SendStatus(404) })
 
 	// Serve the web application
