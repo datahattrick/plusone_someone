@@ -26,10 +26,10 @@ func main() {
 
 	}
 
-	app.Static("/", "./public")
+	app.Static("/", "./web/public")
 
 	// Prepare a fallback route to always serve 'index.html'.
-	app.Static("*", "./public/index.html")
+	app.Static("*", "./web/public/index.html")
 
 	log.Fatal(app.Listen(":" + portListen))
 }
