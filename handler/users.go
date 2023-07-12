@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"net/mail"
 	"time"
 
 	"github.com/datahattrick/plusone_someone/internal/database"
@@ -21,7 +22,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	params := new(parameters)
 
 	if err := c.BodyParser(params); err != nil {
-		SendErrorMessage(c, fiber.StatusBadRequest, "Unable to decode json", err)
+		c.Status(fiber.StatusBadRequest).JSON(err.Error())
 		return nil
 	}
 
@@ -43,4 +44,28 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	c.SendStatus(fiber.StatusOK)
 	c.JSON(models.DatabaseUserToUser(user))
 	return nil
+}
+
+func handleGetUserByUsername(c *fiber.Ctx, id string) error {
+	user, err := utils.Database.DB.GetUserByUsername(c.Context(), c.Params("userid"))
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+c.Params("userid"), err)
+	}
+	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
+}
+
+func handleGetUserByEmail(c *fiber.Ctx, id string) error {
+	user, err := utils.Database.DB.GetUserByEmail(c.Context(), c.Params("userid"))
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+c.Params("userid"), err)
+	}
+	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
+}
+
+func HandleGetUser(c *fiber.Ctx) error {
+	if id, err := mail.ParseAddress(c.Params("userid")); err == nil {
+		return handleGetUserByEmail(c, id.Address)
+	} else {
+		return handleGetUserByUsername(c, c.Params("userid"))
+	}
 }

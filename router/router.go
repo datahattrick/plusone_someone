@@ -25,7 +25,7 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	// User API
 	user := v1.Group("/user")
 	user.Get("/", func(c *fiber.Ctx) error { return c.SendString("Welcome User to user routing") })
-	user.Get("/:userid", func(c *fiber.Ctx) error { return c.SendString("Searching for user unsuccessfully") })
+	user.Get("/:userid", handler.HandleGetUser)
 	user.Post("/", handler.HandleCreateUser)
 	user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
 	user.Delete("/:userid", func(c *fiber.Ctx) error { return c.SendString("Deleting user, you sure?") })
