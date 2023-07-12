@@ -2,9 +2,11 @@ package handler
 
 import "github.com/gofiber/fiber/v2"
 
-func SendError(c *fiber.Ctx, code int, msg string) error {
+func SendErrorMessage(c *fiber.Ctx, code int, msg string, err error) error {
 	c.SendStatus(code)
 	return c.JSON(fiber.Map{
-		"error": msg,
+		"error":   "message",
+		"message": msg,
+		"data":    err,
 	})
 }

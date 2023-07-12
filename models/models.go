@@ -1,10 +1,23 @@
 package models
 
 import (
+	"database/sql"
+	"log"
 	"time"
 
 	"github.com/datahattrick/plusone_someone/internal/database"
 )
+
+var DB *database.Queries
+
+func ConnectDB() {
+	db, err := sql.Open("sqlite3", "./sql/db/main.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	DB = database.New(db)
+}
 
 type User struct {
 	ID        string    `json:"id"`
@@ -17,7 +30,7 @@ type User struct {
 	ApiKey    string    `json:"api_key"`
 }
 
-func databaseUserToUser(dbuser database.User) User {
+func DatabaseUserToUser(dbuser database.User) User {
 	return User{
 		ID:        dbuser.ID,
 		CreatedAt: dbuser.CreatedAt,
