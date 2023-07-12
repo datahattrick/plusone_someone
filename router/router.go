@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/datahattrick/plusone_someone/handler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
@@ -15,22 +16,30 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	}))
 
 	v1 := api.Group("/v1")
+
+	// Auth
+	auth := api.Group("/auth")
+	auth.Post("/login", handler.Login)
+
 	// User API
-	v1.Get("/user", func(c *fiber.Ctx) error { return c.SendString("Welcome User to v1 routing") })
-	v1.Get("/user/:userid", func(c *fiber.Ctx) error { return c.SendString("Searching for user unsuccessfully") })
+	user := api.Group("/user")
+	user.Get("/", func(c *fiber.Ctx) error { return c.SendString("Welcome User to user routing") })
+	user.Get("/:userid", func(c *fiber.Ctx) error { return c.SendString("Searching for user unsuccessfully") })
 
-	v1.Post("/user", func(c *fiber.Ctx) error { return c.SendString("Trying really hard to create a user") })
-	v1.Post("/user/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
+	user.Post("/", func(c *fiber.Ctx) error { return c.SendString("Trying really hard to create a user") })
 
-	v1.Delete("/user/:userid", func(c *fiber.Ctx) error { return c.SendString("Deleting user, you sure?") })
+	user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
+
+	user.Delete("/:userid", func(c *fiber.Ctx) error { return c.SendString("Deleting user, you sure?") })
 
 	//Posts API
-	v1.Get("/posts", func(c *fiber.Ctx) error { return c.SendString("Getting all of the posts") })
-	v1.Get("/posts/:postid", func(c *fiber.Ctx) error { return c.SendString("Getting one of the posts") })
+	posts := api.Group("/posts")
+	posts.Get("/", func(c *fiber.Ctx) error { return c.SendString("Getting all of the posts") })
+	posts.Get("/:postid", func(c *fiber.Ctx) error { return c.SendString("Getting one of the posts") })
 
-	v1.Post("/posts", func(c *fiber.Ctx) error { return c.SendString("Creating a post") })
+	posts.Post("/", func(c *fiber.Ctx) error { return c.SendString("Creating a post") })
 
-	v1.Delete("/posts/:postid", func(c *fiber.Ctx) error { return c.SendString("Deleting a post") })
+	posts.Delete("/:postid", func(c *fiber.Ctx) error { return c.SendString("Deleting a post") })
 
 	//Other endpoint hits on the api
 	api.All("*", func(c *fiber.Ctx) error { return c.SendStatus(404) })
