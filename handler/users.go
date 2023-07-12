@@ -37,8 +37,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	})
 
 	if err != nil {
-		SendErrorMessage(c, fiber.StatusBadRequest, "Couldn't create user", err)
-		return nil
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Couldn't create user", err)
 	}
 
 	c.SendStatus(fiber.StatusOK)
@@ -68,4 +67,12 @@ func HandleGetUser(c *fiber.Ctx) error {
 	} else {
 		return handleGetUserByUsername(c, c.Params("userid"))
 	}
+}
+
+func HandleGetAllUsers(c *fiber.Ctx) error {
+	user, err := utils.Database.DB.GetAllUsers(c.Context())
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to get list of users", err)
+	}
+	return c.Status(fiber.StatusOK).JSON(models.DatabaseUsersToUsers(user))
 }

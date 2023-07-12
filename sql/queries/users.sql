@@ -11,3 +11,6 @@ SELECT * FROM users WHERE email=?;
 
 -- name: GetUserByUsername :one
 SELECT * FROM users WHERE username=?;
+
+-- name: GetAllUsers :many
+SELECT * FROM users;

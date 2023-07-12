@@ -29,3 +29,11 @@ func DatabaseUserToUser(dbuser database.User) User {
 		ApiKey:    dbuser.ApiKey,
 	}
 }
+
+func DatabaseUsersToUsers(dbusers []database.User) []User {
+	users := []User{}
+	for _, dbuser := range dbusers {
+		users = append(users, DatabaseUserToUser(dbuser))
+	}
+	return users
+}
