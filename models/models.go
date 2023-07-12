@@ -1,23 +1,10 @@
 package models
 
 import (
-	"database/sql"
-	"log"
 	"time"
 
 	"github.com/datahattrick/plusone_someone/internal/database"
 )
-
-var DB *database.Queries
-
-func ConnectDB() {
-	db, err := sql.Open("sqlite3", "./sql/db/main.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	DB = database.New(db)
-}
 
 type User struct {
 	ID        string    `json:"id"`

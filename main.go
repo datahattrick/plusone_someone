@@ -3,12 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/datahattrick/plusone_someone/models"
 	"github.com/datahattrick/plusone_someone/router"
 	"github.com/datahattrick/plusone_someone/utils"
 	"github.com/gofiber/fiber/v2"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -28,7 +25,7 @@ func main() {
 	}
 
 	// Connect to the database
-	models.ConnectDB()
+	utils.ConnectDB()
 
 	//Setup Routes
 	router.SetupRouter(app, hostname, portListen)
