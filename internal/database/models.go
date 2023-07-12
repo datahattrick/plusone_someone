@@ -15,5 +15,6 @@ type User struct {
 	FirstName string
 	LastName  string
 	Email     string
-	Sid       string
+	Username  string
+	ApiKey    string
 }

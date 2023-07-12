@@ -15,6 +15,7 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
+	// Good practice to version
 	v1 := api.Group("/v1")
 
 	// Auth
@@ -22,26 +23,21 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	auth.Post("/login", handler.Login)
 
 	// User API
-	user := api.Group("/user")
+	user := v1.Group("/user")
 	user.Get("/", func(c *fiber.Ctx) error { return c.SendString("Welcome User to user routing") })
 	user.Get("/:userid", func(c *fiber.Ctx) error { return c.SendString("Searching for user unsuccessfully") })
-
 	user.Post("/", func(c *fiber.Ctx) error { return c.SendString("Trying really hard to create a user") })
-
 	user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
-
 	user.Delete("/:userid", func(c *fiber.Ctx) error { return c.SendString("Deleting user, you sure?") })
 
-	//Posts API
-	posts := api.Group("/posts")
+	// Posts API
+	posts := v1.Group("/posts")
 	posts.Get("/", func(c *fiber.Ctx) error { return c.SendString("Getting all of the posts") })
 	posts.Get("/:postid", func(c *fiber.Ctx) error { return c.SendString("Getting one of the posts") })
-
 	posts.Post("/", func(c *fiber.Ctx) error { return c.SendString("Creating a post") })
-
 	posts.Delete("/:postid", func(c *fiber.Ctx) error { return c.SendString("Deleting a post") })
 
-	//Other endpoint hits on the api
+	// Other endpoint hits on the api
 	api.All("*", func(c *fiber.Ctx) error { return c.SendStatus(404) })
 
 	// Serve the web application

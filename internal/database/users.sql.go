@@ -11,9 +11,9 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users(id, created_at, updated_at, first_name, last_name, email, sid) 
-VALUES (?, ?, ?, ?, ?, ?, ?)
-RETURNING id, created_at, updated_at, first_name, last_name, email, sid
+INSERT INTO users(id, created_at, updated_at, first_name, last_name, email, username, api_key) 
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+RETURNING id, created_at, updated_at, first_name, last_name, email, username, api_key
 `
 
 type CreateUserParams struct {
@@ -23,7 +23,8 @@ type CreateUserParams struct {
 	FirstName string
 	LastName  string
 	Email     string
-	Sid       string
+	Username  string
+	ApiKey    string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -34,7 +35,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.FirstName,
 		arg.LastName,
 		arg.Email,
-		arg.Sid,
+		arg.Username,
+		arg.ApiKey,
 	)
 	var i User
 	err := row.Scan(
@@ -44,13 +46,14 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
-		&i.Sid,
+		&i.Username,
+		&i.ApiKey,
 	)
 	return i, err
 }
 
 const getUserByFirstname = `-- name: GetUserByFirstname :one
-SELECT id, created_at, updated_at, first_name, last_name, email, sid FROM users WHERE first_name=?
+SELECT id, created_at, updated_at, first_name, last_name, email, username, api_key FROM users WHERE first_name=?
 `
 
 func (q *Queries) GetUserByFirstname(ctx context.Context, firstName string) (User, error) {
@@ -63,7 +66,8 @@ func (q *Queries) GetUserByFirstname(ctx context.Context, firstName string) (Use
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
-		&i.Sid,
+		&i.Username,
+		&i.ApiKey,
 	)
 	return i, err
 }

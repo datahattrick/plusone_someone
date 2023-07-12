@@ -6,7 +6,8 @@ CREATE TABLE users (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT NOT NULL,
-    sid TEXT NOT NULL
+    username TEXT NOT NULL,
+    api_key TEXT NOT NULL
 );
 
 -- +goose Down
