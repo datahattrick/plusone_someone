@@ -29,13 +29,13 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	user.Post("/", handler.HandleCreateUser)
 	//user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
 	user.Delete("/:userid", handler.HandleDeleteUser)
-	user.Get("/post")
-	user.Get("/post/:id")
+	// user.Get("/post", ) - TODO: need middlewareAuth
+	user.Get("/post/:id", handler.HandleGetPostByUser)
 
 	// Posts API
 	posts := v1.Group("/posts")
-	posts.Get("/", func(c *fiber.Ctx) error { return c.SendString("Getting all of the posts") })
-	posts.Get("/:id", func(c *fiber.Ctx) error { return c.SendString("Getting one of the posts") })
+	posts.Get("/", handler.HandleGetPosts)
+	posts.Get("/:id", handler.HandleGetPostByID)
 	posts.Post("/", handler.HandlerCreatePost)
 	posts.Delete("/:id", handler.HandleDeletePost)
 
