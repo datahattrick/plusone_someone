@@ -54,7 +54,7 @@ func DatabasePostToPost(dbpost database.Post) Post {
 		UpdatedAt: dbpost.UpdatedAt,
 		Message:   dbpost.Message,
 		AuthorID:  dbpost.AuthorID,
-		UserID:    dbpost.AuthorID,
+		UserID:    dbpost.UserID,
 	}
 }
 
