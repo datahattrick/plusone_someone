@@ -47,7 +47,7 @@ func HandleDeletePost(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func handleGetPostByUser(c *fiber.Ctx) error {
+func HandleGetPostByUser(c *fiber.Ctx) error {
 	id := c.Params("id")
 	post, err := utils.Database.DB.GetPostsByUser(c.Context(), id)
 	if err != nil {
