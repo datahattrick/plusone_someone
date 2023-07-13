@@ -22,8 +22,7 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	params := new(parameters)
 
 	if err := c.BodyParser(params); err != nil {
-		c.Status(fiber.StatusBadRequest).JSON(err.Error())
-		return nil
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to create user", err)
 	}
 
 	user, err := utils.Database.DB.CreateUser(c.Context(), database.CreateUserParams{

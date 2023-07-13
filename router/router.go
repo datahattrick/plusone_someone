@@ -27,15 +27,15 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	user.Get("/", handler.HandleGetAllUsers)
 	user.Get("/:userid", handler.HandleGetUser)
 	user.Post("/", handler.HandleCreateUser)
-	user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
+	//user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
 	user.Delete("/:userid", handler.HandleDeleteUser)
 
 	// Posts API
 	posts := v1.Group("/posts")
 	posts.Get("/", func(c *fiber.Ctx) error { return c.SendString("Getting all of the posts") })
-	posts.Get("/:postid", func(c *fiber.Ctx) error { return c.SendString("Getting one of the posts") })
-	posts.Post("/", func(c *fiber.Ctx) error { return c.SendString("Creating a post") })
-	posts.Delete("/:postid", func(c *fiber.Ctx) error { return c.SendString("Deleting a post") })
+	posts.Get("/:id", func(c *fiber.Ctx) error { return c.SendString("Getting one of the posts") })
+	posts.Post("/", handler.HandlerCreatePost)
+	posts.Delete("/:id", handler.HandleDeletePost)
 
 	// Other endpoint hits on the api
 	api.All("*", func(c *fiber.Ctx) error { return c.SendStatus(404) })
