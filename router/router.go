@@ -43,7 +43,7 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	api.All("*", func(c *fiber.Ctx) error { return c.SendStatus(404) })
 
 	// Serve the web application
-	app.Static("/", "./web/public")
+	app.Static("/", "./web/build")
 	// Prepare a fallback route to always serve 'index.html'.
-	app.Static("*", "./web/public/404.html")
+	app.Static("*", "./tmp/404.html")
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/datahattrick/plusone_someone/router"
 	"github.com/datahattrick/plusone_someone/utils"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -27,8 +28,37 @@ func main() {
 	// Connect to the database
 	utils.ConnectDB()
 
+	app.Get("/ws/:id", websocket.New(func(c *websocket.Conn) {
+		log.Println(c.Locals("allowed"))
+		log.Println(c.Params("id"))
+		log.Println(c.Query("v"))
+		log.Println(c.Cookies("session"))
+
+		// websocket.Conn bindings https://pkg.go.dev/github.com/fasthttp/websocket?tab=doc#pkg-index
+
+		var (
+			mt  int
+			msg []byte
+			err error
+		)
+		for {
+			if mt, msg, err = c.ReadMessage(); err != nil {
+				log.Println("read:", err)
+				break
+			}
+			log.Printf("recv: %s", msg)
+
+			if err = c.WriteMessage(mt, msg); err != nil {
+				log.Println("write:", err)
+				break
+			}
+		}
+
+	}))
+
 	//Setup Routes
 	router.SetupRouter(app, hostname, portListen)
 
 	log.Fatal(app.Listen(hostname + ":" + portListen))
+	// Access the websocket server: ws://localhost:3000/ws/123?v=1.0
 }
