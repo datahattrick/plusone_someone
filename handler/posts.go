@@ -68,3 +68,12 @@ func HandleGetPostByID(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(models.DatabasePostToPost(post))
 }
+
+func HandleGetPosts(c *fiber.Ctx) error {
+	posts, err := utils.Database.DB.GetAllPosts(c.Context())
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find any posts", err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(models.DatabasePostsToPosts(posts))
+}
