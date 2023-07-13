@@ -39,9 +39,10 @@ func HandlerCreatePost(c *fiber.Ctx) error {
 }
 
 func HandleDeletePost(c *fiber.Ctx) error {
-	err := utils.Database.DB.DeletePost(c.Context(), c.Params("userid"))
+	id := c.Params("id")
+	err := utils.Database.DB.DeletePost(c.Context(), id)
 	if err != nil {
-		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete post: "+c.Params("userid"), err)
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete post: "+id, err)
 	}
 	return c.SendStatus(fiber.StatusOK)
 }
@@ -51,5 +52,19 @@ func handleGetPostByUser(c *fiber.Ctx) error {
 	post, err := utils.Database.DB.GetPostsByUser(c.Context(), id)
 	if err != nil {
 		post, err = utils.Database.DB.GetPostsByAuthor(c.Context(), id)
+		if err != nil {
+			return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find a post by user: "+id, err)
+		}
 	}
+	return c.Status(fiber.StatusOK).JSON(models.DatabasePostsToPosts(post))
+}
+
+func HandleGetPostByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	post, err := utils.Database.DB.GetPostByID(c.Context(), id)
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find a post by user: "+id, err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(models.DatabasePostToPost(post))
 }
