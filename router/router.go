@@ -28,7 +28,7 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	user.Get("/:userid", handler.HandleGetUser)
 	user.Post("/", handler.HandleCreateUser)
 	user.Patch("/:userid", func(c *fiber.Ctx) error { return c.SendString("Updating user, one moment") })
-	user.Delete("/:userid", func(c *fiber.Ctx) error { return c.SendString("Deleting user, you sure?") })
+	user.Delete("/:userid", handler.HandleDeleteUser)
 
 	// Posts API
 	posts := v1.Group("/posts")

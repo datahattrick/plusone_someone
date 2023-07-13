@@ -46,26 +46,37 @@ func HandleCreateUser(c *fiber.Ctx) error {
 }
 
 func handleGetUserByUsername(c *fiber.Ctx, id string) error {
-	user, err := utils.Database.DB.GetUserByUsername(c.Context(), c.Params("userid"))
+	user, err := utils.Database.DB.GetUserByUsername(c.Context(), id)
 	if err != nil {
-		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+c.Params("userid"), err)
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+id, err)
 	}
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
 }
 
 func handleGetUserByEmail(c *fiber.Ctx, id string) error {
-	user, err := utils.Database.DB.GetUserByEmail(c.Context(), c.Params("userid"))
+	user, err := utils.Database.DB.GetUserByEmail(c.Context(), id)
 	if err != nil {
-		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+c.Params("userid"), err)
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+id, err)
+	}
+	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
+}
+
+func handleGetUserByID(c *fiber.Ctx, id string) error {
+	user, err := utils.Database.DB.GetUserById(c.Context(), id)
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+id, err)
 	}
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
 }
 
 func HandleGetUser(c *fiber.Ctx) error {
-	if id, err := mail.ParseAddress(c.Params("userid")); err == nil {
+	user := c.Params("userid")
+	if id, err := mail.ParseAddress(user); err == nil {
 		return handleGetUserByEmail(c, id.Address)
+	} else if id, err := uuid.Parse(user); err == nil {
+		return handleGetUserByID(c, id.String())
 	} else {
-		return handleGetUserByUsername(c, c.Params("userid"))
+		return handleGetUserByUsername(c, user)
 	}
 }
 
@@ -75,4 +86,12 @@ func HandleGetAllUsers(c *fiber.Ctx) error {
 		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to get list of users", err)
 	}
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUsersToUsers(user))
+}
+
+func HandleDeleteUser(c *fiber.Ctx) error {
+	err := utils.Database.DB.DeleteUser(c.Context(), c.Params("userid"))
+	if err != nil {
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete user: "+c.Params("userid"), err)
+	}
+	return c.SendStatus(fiber.StatusOK)
 }

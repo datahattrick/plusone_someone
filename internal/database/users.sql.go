@@ -52,6 +52,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users WHERE id=?
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id string) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, id)
+	return err
+}
+
 const getAllUsers = `-- name: GetAllUsers :many
 SELECT id, created_at, updated_at, first_name, last_name, email, username, api_key FROM users
 `
@@ -114,6 +123,26 @@ SELECT id, created_at, updated_at, first_name, last_name, email, username, api_k
 
 func (q *Queries) GetUserByFirstname(ctx context.Context, firstName string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserByFirstname, firstName)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Username,
+		&i.ApiKey,
+	)
+	return i, err
+}
+
+const getUserById = `-- name: GetUserById :one
+SELECT id, created_at, updated_at, first_name, last_name, email, username, api_key FROM users WHERE id=?
+`
+
+func (q *Queries) GetUserById(ctx context.Context, id string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
