@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"net/mail"
 	"time"
 
 	"github.com/datahattrick/plusone_someone/internal/database"
@@ -10,6 +9,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 )
+
+type search struct {
+	searchKey   string
+	searchparam string
+}
 
 func HandleCreateUser(c *fiber.Ctx) error {
 	type parameters struct {
@@ -44,23 +48,8 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	return nil
 }
 
-func handleGetUserByUsername(c *fiber.Ctx, id string) error {
-	user, err := utils.Database.DB.GetUserByUsername(c.Context(), id)
-	if err != nil {
-		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+id, err)
-	}
-	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
-}
-
-func handleGetUserByEmail(c *fiber.Ctx, id string) error {
-	user, err := utils.Database.DB.GetUserByEmail(c.Context(), id)
-	if err != nil {
-		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+id, err)
-	}
-	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
-}
-
-func handleGetUserByID(c *fiber.Ctx, id string) error {
+func HandleGetUserByID(c *fiber.Ctx) error {
+	id := c.Params("id")
 	user, err := utils.Database.DB.GetUserById(c.Context(), id)
 	if err != nil {
 		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+id, err)
@@ -69,14 +58,18 @@ func handleGetUserByID(c *fiber.Ctx, id string) error {
 }
 
 func HandleGetUser(c *fiber.Ctx) error {
-	user := c.Params("userid")
-	if id, err := mail.ParseAddress(user); err == nil {
-		return handleGetUserByEmail(c, id.Address)
-	} else if id, err := uuid.Parse(user); err == nil {
-		return handleGetUserByID(c, id.String())
+
+	if s := c.Query("search"); s != "" {
+		user, err := utils.Database.DB.GetUserBySearch(c.Context(), "%"+s+"%")
+		if err != nil {
+			return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+s, err)
+		}
+		return c.Status(fiber.StatusOK).JSON(models.DatabaseUsersToUsers(user))
+
 	} else {
-		return handleGetUserByUsername(c, user)
+		return c.SendString("no search, no user")
 	}
+
 }
 
 func HandleGetAllUsers(c *fiber.Ctx) error {
@@ -88,9 +81,9 @@ func HandleGetAllUsers(c *fiber.Ctx) error {
 }
 
 func HandleDeleteUser(c *fiber.Ctx) error {
-	err := utils.Database.DB.DeleteUser(c.Context(), c.Params("userid"))
+	err := utils.Database.DB.DeleteUser(c.Context(), c.Params("id"))
 	if err != nil {
-		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete user: "+c.Params("userid"), err)
+		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete user: "+c.Params("id"), err)
 	}
 	return c.SendStatus(fiber.StatusOK)
 }

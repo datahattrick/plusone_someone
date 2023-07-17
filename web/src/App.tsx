@@ -1,5 +1,7 @@
 import './App.css';
+import MyForm from "./Form"
 import {BsFillMoonStarsFill, BsFillPlusCircleFill} from "react-icons/bs"
+import React, { useState, useEffect } from 'react';
 
 function App() {
 
@@ -36,31 +38,14 @@ function App() {
             }}
           />
         </div>
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div className="text-center items-center">
+        <div className="mx-auto max-w-2xl py-16 sm:py-48 lg:py-56">
+        <div className="text-center items-center">
             <h2 className="text-7xl py-2 text-teal-600 font-medium">Welcome</h2>
-            <h3 className="text=2xl py-2 text-orange-400">Plus One Some One</h3>
-            <div className="w-full">
-              <div className="flex items-center border-b border-amber-700 py-2">
-                <input className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="Jane Doe" aria-label="Full name">
-                </input>
-                <button
-                className="rounded-md bg-orange-400 px-3.5 py-2.5 font-semibold text-white shadow-sm hover:bg-orange-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 text-2xl"
-              >
-                +1
-              </button>
-              </div>
-              <div className="mb-6">
-    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Large input</label>
-    <input type="text" id="large-input" className="block w-full p-4 border border-gray-300 rounded-lg bg-gray-50 sm:text-md focus:ring-orange-200 focus:border-blue-500 "/>
-</div>
-            </div>
-
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-
-            </div>
-          </div>
+            <h3 className="text=2xl py-2 text-orange-400">Plus One Some One</h3>   
+        <MyForm />
         </div>
+        </div>
+        
         <div
           className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
           aria-hidden="true"
@@ -75,6 +60,7 @@ function App() {
         </div>
       </div>
         </section>
+
       </main>
     </>
   );

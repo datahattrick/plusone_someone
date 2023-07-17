@@ -3,14 +3,12 @@ INSERT INTO users(id, created_at, updated_at, first_name, last_name, email, user
 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 RETURNING *;
 
--- name: GetUserByFirstname :one
-SELECT * FROM users WHERE first_name=?;
-
--- name: GetUserByEmail :one
-SELECT * FROM users WHERE email=?;
-
--- name: GetUserByUsername :one
-SELECT * FROM users WHERE username=?;
+-- name: GetUserBySearch :many
+SELECT * FROM users WHERE username like ?1 or
+    first_name like ?1 OR
+    last_name like ?1 OR
+    email like ?1
+    ;
 
 -- name: GetUserById :one
 SELECT * FROM users WHERE id=?;
