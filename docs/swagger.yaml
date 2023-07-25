@@ -1,0 +1,47 @@
+basePath: /api/v1
+definitions:
+  models.User:
+    properties:
+      api_key:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: A simple API to create a message and give someone a plusone.
+  title: Plusone Someone API
+  version: "0.1"
+paths:
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: This will show all users that have been stored in the local DB.These
+        users would have been synced on start up of the application. If not some default
+        users would have been generated for testing.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Lists all users in the database.
+schemes:
+- http
+- https
+swagger: "2.0"

@@ -72,6 +72,13 @@ func HandleGetUser(c *fiber.Ctx) error {
 
 }
 
+// GetUsers godoc
+// @Summary Lists all users in the database.
+// @Description This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.
+// @Accept json
+// @Produce json
+// @Success 200 {object} models.User{}
+// @Router /users [get]
 func HandleGetAllUsers(c *fiber.Ctx) error {
 	user, err := utils.Database.DB.GetAllUsers(c.Context())
 	if err != nil {

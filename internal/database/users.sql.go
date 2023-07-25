@@ -97,9 +97,29 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 	return items, nil
 }
 
-const getUserById = `-- name: GetUserById :one
+const getUserByEmail = `-- name: GetUserByEmail :one
 ;
 
+SELECT id, created_at, updated_at, first_name, last_name, email, username, api_key FROM users WHERE email=?
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Username,
+		&i.ApiKey,
+	)
+	return i, err
+}
+
+const getUserById = `-- name: GetUserById :one
 SELECT id, created_at, updated_at, first_name, last_name, email, username, api_key FROM users WHERE id=?
 `
 
@@ -156,4 +176,24 @@ func (q *Queries) GetUserBySearch(ctx context.Context, username string) ([]User,
 		return nil, err
 	}
 	return items, nil
+}
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, created_at, updated_at, first_name, last_name, email, username, api_key FROM users WHERE username=?
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Username,
+		&i.ApiKey,
+	)
+	return i, err
 }

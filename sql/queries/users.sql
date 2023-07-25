@@ -10,6 +10,12 @@ SELECT * FROM users WHERE username like ?1 or
     email like ?1
     ;
 
+-- name: GetUserByEmail :one
+SELECT * FROM users WHERE email=?;
+
+-- name: GetUserByUsername :one
+SELECT * FROM users WHERE username=?;
+
 -- name: GetUserById :one
 SELECT * FROM users WHERE id=?;
 
