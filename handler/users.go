@@ -10,19 +10,23 @@ import (
 	"github.com/google/uuid"
 )
 
-type search struct {
-	searchKey   string
-	searchparam string
+type parameters struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
 }
 
+// CreateUser godoc
+//
+//	@Summary		Create a User account
+//	@Description	Creates a user account returns the account details
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		parameters	true	"User parameters"
+//	@Success		200		{object}	models.User{}
+//	@Router			/user [post]
 func HandleCreateUser(c *fiber.Ctx) error {
-	type parameters struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Username  string `json:"username"`
-		Email     string `json:"email"`
-	}
-
 	params := new(parameters)
 
 	if err := c.BodyParser(params); err != nil {
@@ -48,6 +52,15 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	return nil
 }
 
+// GetUserByID godoc
+//
+//	@Summary		Return a user by ID
+//	@Description	Return a single user using their ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	false	"User ID"
+//	@Success		200	{object}	models.User{}
+//	@Router			/user/{id} [get]
 func HandleGetUserByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	user, err := utils.Database.DB.GetUserById(c.Context(), id)
@@ -57,28 +70,36 @@ func HandleGetUserByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
 }
 
+// GetUser godoc
+//
+//	@Summary		Search for a User account
+//	@Description	Can search using username, email or name
+//	@Accept			json
+//	@Produce		json
+//	@Param			search	query		string	false	"username, email, name"
+//	@Success		200		{object}	models.User{}
+//	@Failure		200		string		"no search, no user"
+//	@Router			/user [get]
 func HandleGetUser(c *fiber.Ctx) error {
-
 	if s := c.Query("search"); s != "" {
 		user, err := utils.Database.DB.GetUserBySearch(c.Context(), "%"+s+"%")
 		if err != nil {
 			return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find user: "+s, err)
 		}
 		return c.Status(fiber.StatusOK).JSON(models.DatabaseUsersToUsers(user))
-
 	} else {
 		return c.SendString("no search, no user")
 	}
-
 }
 
 // GetUsers godoc
-// @Summary Lists all users in the database.
-// @Description This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.
-// @Accept json
-// @Produce json
-// @Success 200 {object} models.User{}
-// @Router /users [get]
+//
+//	@Summary		Lists all users in the database.
+//	@Description	This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.User{}
+//	@Router			/users [get]
 func HandleGetAllUsers(c *fiber.Ctx) error {
 	user, err := utils.Database.DB.GetAllUsers(c.Context())
 	if err != nil {
@@ -87,6 +108,15 @@ func HandleGetAllUsers(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUsersToUsers(user))
 }
 
+// DeleteUser godoc
+//
+//	@Summary		Deletes A user
+//	@Description	This will delete a user, more for cleaning database.
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	false	"User ID"
+//	@Success		200	{string}	string	"ok"
+//	@Router			/user/{id} [delete]
 func HandleDeleteUser(c *fiber.Ctx) error {
 	err := utils.Database.DB.DeleteUser(c.Context(), c.Params("id"))
 	if err != nil {

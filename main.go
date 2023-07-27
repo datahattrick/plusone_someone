@@ -1,7 +1,5 @@
 package main
 
-//go:generate swagger generate spec
-
 import (
 	"log"
 
@@ -15,13 +13,13 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-// @title Plusone Someone API
-// @version 0.1
-// @description A simple API to create a message and give someone a plusone.
+//	@title			Plusone Someone API
+//	@version		0.1
+//	@description	A simple API to create a message and give someone a plusone.
 //
-// @schemes http https
-// @host localhost:8000
-// @BasePath /api/v1
+//	@schemes		http https
+//	@host			localhost:8000
+//	@BasePath		/api/v1
 
 func main() {
 	app := fiber.New()

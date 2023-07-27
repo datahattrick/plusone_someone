@@ -1,5 +1,16 @@
 basePath: /api/v1
 definitions:
+  handler.parameters:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+    type: object
   models.User:
     properties:
       api_key:
@@ -26,6 +37,78 @@ info:
   title: Plusone Someone API
   version: "0.1"
 paths:
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Can search using username, email or name
+      parameters:
+      - description: username, email, name
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: no search, no user
+          schema:
+            type: string
+      summary: Search for a User account
+    post:
+      consumes:
+      - application/json
+      description: Creates a user account returns the account details
+      parameters:
+      - description: User parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.parameters'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Create a User account
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This will delete a user, more for cleaning database.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Deletes A user
+    get:
+      consumes:
+      - application/json
+      description: Return a single user using their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Return a user by ID
   /users:
     get:
       consumes:
