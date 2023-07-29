@@ -19,7 +19,10 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 	// Good practice to version
 	v1 := api.Group("/v1")
 
-	v1.Get("/swagger/*", swagger.HandlerDefault)
+	v1.Get("/swagger/*", swagger.New(swagger.Config{
+		DeepLinking:  true,
+		DocExpansion: "list",
+	}))
 
 	// User API
 	v1.Get("/users", handler.HandleGetAllUsers)
@@ -43,8 +46,6 @@ func SetupRouter(app *fiber.App, hostname string, portListen string) {
 
 	// Serve the web application
 	app.Static("/", "./web/build")
-
-	v1.Static("/swagger/*", "./docs")
 	// Prepare a fallback route to always serve 'index.html'.
 	app.Static("*", "./tmp/404.html")
 }

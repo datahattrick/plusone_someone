@@ -16,6 +16,100 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/posts": {
+            "post": {
+                "description": "Creates a post, along with a message then sends user an anonymous email with said message",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Create a post to plusone someone",
+                "operationId": "CreatePost",
+                "parameters": [
+                    {
+                        "description": "Post Parameters",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.postparams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Post"
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{id}": {
+            "get": {
+                "description": "Returns a specific post",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get a Post",
+                "operationId": "GetPostByID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Post"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes a post, this is more for cleaning then actual use",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Deletes a post",
+                "operationId": "DeletePost",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Post ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/user": {
             "get": {
                 "description": "Can search using username, email or name",
@@ -25,7 +119,11 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "user"
+                ],
                 "summary": "Search for a User account",
+                "operationId": "GetUser",
                 "parameters": [
                     {
                         "type": "string",
@@ -51,7 +149,11 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "user"
+                ],
                 "summary": "Create a User account",
+                "operationId": "CreateUser",
                 "parameters": [
                     {
                         "description": "User parameters",
@@ -59,7 +161,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.parameters"
+                            "$ref": "#/definitions/handler.userparams"
                         }
                     }
                 ],
@@ -73,6 +175,35 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/post/{id}": {
+            "get": {
+                "description": "Get all the posts created using a users ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get all posts created by a user",
+                "operationId": "GetPostByUser",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/user/{id}": {
             "get": {
                 "description": "Return a single user using their ID",
@@ -82,7 +213,11 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "user"
+                ],
                 "summary": "Return a user by ID",
+                "operationId": "GetUserByID",
                 "parameters": [
                     {
                         "type": "string",
@@ -108,7 +243,11 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "user"
+                ],
                 "summary": "Deletes A user",
+                "operationId": "DeleteUser",
                 "parameters": [
                     {
                         "type": "string",
@@ -136,7 +275,11 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "user"
+                ],
                 "summary": "Lists all users in the database.",
+                "operationId": "GetUsers",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -149,7 +292,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handler.parameters": {
+        "handler.postparams": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.userparams": {
             "type": "object",
             "properties": {
                 "email": {
@@ -162,6 +319,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Post": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

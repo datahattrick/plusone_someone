@@ -10,24 +10,24 @@ import (
 	"github.com/google/uuid"
 )
 
-type parameters struct {
+type userparams struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 }
 
-// CreateUser godoc
-//
+//	@id				CreateUser
+//	@tags			user
 //	@Summary		Create a User account
 //	@Description	Creates a user account returns the account details
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body		parameters	true	"User parameters"
+//	@Param			request	body		userparams	true	"User parameters"
 //	@Success		200		{object}	models.User{}
 //	@Router			/user [post]
 func HandleCreateUser(c *fiber.Ctx) error {
-	params := new(parameters)
+	params := new(userparams)
 
 	if err := c.BodyParser(params); err != nil {
 		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to create user", err)
@@ -52,8 +52,8 @@ func HandleCreateUser(c *fiber.Ctx) error {
 	return nil
 }
 
-// GetUserByID godoc
-//
+//	@id				GetUserByID
+//	@tags			user
 //	@Summary		Return a user by ID
 //	@Description	Return a single user using their ID
 //	@Accept			json
@@ -70,8 +70,8 @@ func HandleGetUserByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUserToUser(user))
 }
 
-// GetUser godoc
-//
+//	@id				GetUser
+//	@tags			user
 //	@Summary		Search for a User account
 //	@Description	Can search using username, email or name
 //	@Accept			json
@@ -92,8 +92,8 @@ func HandleGetUser(c *fiber.Ctx) error {
 	}
 }
 
-// GetUsers godoc
-//
+//	@id				GetUsers
+//	@tags			user
 //	@Summary		Lists all users in the database.
 //	@Description	This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.
 //	@Accept			json
@@ -108,8 +108,8 @@ func HandleGetAllUsers(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(models.DatabaseUsersToUsers(user))
 }
 
-// DeleteUser godoc
-//
+//	@id				DeleteUser
+//	@tags			user
 //	@Summary		Deletes A user
 //	@Description	This will delete a user, more for cleaning database.
 //	@Accept			json
@@ -123,4 +123,25 @@ func HandleDeleteUser(c *fiber.Ctx) error {
 		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete user: "+c.Params("id"), err)
 	}
 	return c.SendStatus(fiber.StatusOK)
+}
+
+//	@id				GetPostByUser
+//	@tags			user
+//	@Summary		Get all posts created by a user
+//	@Description	Get all the posts created using a users ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	string	false	"User ID"
+//	@Success		200
+//	@Router			/user/post/{id} [get]
+func HandleGetPostByUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	post, err := utils.Database.DB.GetPostsByUser(c.Context(), id)
+	if err != nil {
+		post, err = utils.Database.DB.GetPostsByAuthor(c.Context(), id)
+		if err != nil {
+			return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find a post by user: "+id, err)
+		}
+	}
+	return c.Status(fiber.StatusOK).JSON(models.DatabasePostsToPosts(post))
 }
