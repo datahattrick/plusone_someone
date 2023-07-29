@@ -1,0 +1,251 @@
+basePath: /api/v1
+definitions:
+  handler.postparams:
+    properties:
+      author_id:
+        type: string
+      message:
+        type: string
+      user_id:
+        type: string
+    type: object
+  handler.userparams:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+    type: object
+  models.Post:
+    properties:
+      author_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.User:
+    properties:
+      api_key:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: A simple API to create a message and give someone a plusone.
+  title: Plusone Someone API
+  version: "0.1"
+paths:
+  /posts:
+    post:
+      consumes:
+      - application/json
+      description: Creates a post, along with a message then sends user an anonymous
+        email with said message
+      operationId: CreatePost
+      parameters:
+      - description: Post Parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.postparams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Create a post to plusone someone
+      tags:
+      - posts
+  /posts/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a post, this is more for cleaning then actual use
+      operationId: DeletePost
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Deletes a post
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      description: Returns a specific post
+      operationId: GetPostByID
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Post'
+      summary: Get a Post
+      tags:
+      - posts
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Can search using username, email or name
+      operationId: GetUser
+      parameters:
+      - description: username, email, name
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: no search, no user
+          schema:
+            type: string
+      summary: Search for a User account
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: Creates a user account returns the account details
+      operationId: CreateUser
+      parameters:
+      - description: User parameters
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userparams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Create a User account
+      tags:
+      - user
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This will delete a user, more for cleaning database.
+      operationId: DeleteUser
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Deletes A user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Return a single user using their ID
+      operationId: GetUserByID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Return a user by ID
+      tags:
+      - user
+  /user/post/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all the posts created using a users ID
+      operationId: GetPostByUser
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Get all posts created by a user
+      tags:
+      - user
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: This will show all users that have been stored in the local DB.These
+        users would have been synced on start up of the application. If not some default
+        users would have been generated for testing.
+      operationId: GetUsers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Lists all users in the database.
+      tags:
+      - user
+schemes:
+- http
+- https
+swagger: "2.0"

@@ -10,14 +10,23 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlerCreatePost(c *fiber.Ctx) error {
-	type parameters struct {
-		Message  string `json:"message"`
-		AuthorID string `json:"author_id"`
-		UserID   string `json:"user_id"`
-	}
+type postparams struct {
+	Message  string `json:"message"`
+	AuthorID string `json:"author_id"`
+	UserID   string `json:"user_id"`
+}
 
-	params := new(parameters)
+//	@id				CreatePost
+//	@tags			posts
+//	@Summary		Create a post to plusone someone
+//	@Description	Creates a post, along with a message then sends user an anonymous email with said message
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		postparams	true	"Post Parameters"
+//	@Success		200		{object}	models.Post{}
+//	@Router			/posts [post]
+func HandlerCreatePost(c *fiber.Ctx) error {
+	params := new(postparams)
 	if err := c.BodyParser(params); err != nil {
 		return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to create post", err)
 	}
@@ -38,6 +47,15 @@ func HandlerCreatePost(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(models.DatabasePostToPost(posts))
 }
 
+//	@id				DeletePost
+//	@tags			posts
+//	@Summary		Deletes a post
+//	@Description	Deletes a post, this is more for cleaning then actual use
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	string	false	"Post ID"
+//	@Success		200
+//	@Router			/posts/{id} [delete]
 func HandleDeletePost(c *fiber.Ctx) error {
 	id := c.Params("id")
 	err := utils.Database.DB.DeletePost(c.Context(), id)
@@ -47,18 +65,15 @@ func HandleDeletePost(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func HandleGetPostByUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	post, err := utils.Database.DB.GetPostsByUser(c.Context(), id)
-	if err != nil {
-		post, err = utils.Database.DB.GetPostsByAuthor(c.Context(), id)
-		if err != nil {
-			return SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find a post by user: "+id, err)
-		}
-	}
-	return c.Status(fiber.StatusOK).JSON(models.DatabasePostsToPosts(post))
-}
-
+//	@id				GetPostByID
+//	@tags			posts
+//	@Summary		Get a Post
+//	@Description	Returns a specific post
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	false	"Post ID"
+//	@Success		200	{object}	models.Post{}
+//	@Router			/posts/{id} [get]
 func HandleGetPostByID(c *fiber.Ctx) error {
 	id := c.Params("id")
 	post, err := utils.Database.DB.GetPostByID(c.Context(), id)
