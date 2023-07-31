@@ -17,6 +17,28 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/posts": {
+            "get": {
+                "description": "Returns every post in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get all posts",
+                "operationId": "GetAllPosts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/posts.Post"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates a post, along with a message then sends user an anonymous email with said message",
                 "consumes": [
@@ -37,7 +59,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.postparams"
+                            "$ref": "#/definitions/posts.postparams"
                         }
                     }
                 ],
@@ -45,7 +67,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Post"
+                            "$ref": "#/definitions/posts.Post"
                         }
                     }
                 }
@@ -77,7 +99,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Post"
+                            "$ref": "#/definitions/posts.Post"
                         }
                     }
                 }
@@ -110,9 +132,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user": {
+        "/users": {
             "get": {
-                "description": "Can search using username, email or name",
+                "description": "This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.",
                 "consumes": [
                     "application/json"
                 ],
@@ -122,21 +144,13 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Search for a User account",
-                "operationId": "GetUser",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "username, email, name",
-                        "name": "search",
-                        "in": "query"
-                    }
-                ],
+                "summary": "Lists all users in the database.",
+                "operationId": "GetUsers",
                 "responses": {
                     "200": {
-                        "description": "no search, no user",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/users.User"
                         }
                     }
                 }
@@ -161,7 +175,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.userparams"
+                            "$ref": "#/definitions/users.userparams"
                         }
                     }
                 ],
@@ -169,13 +183,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/users.User"
                         }
                     }
                 }
             }
         },
-        "/user/post/{id}": {
+        "/users/post/{id}": {
             "get": {
                 "description": "Get all the posts created using a users ID",
                 "consumes": [
@@ -204,7 +218,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{id}": {
+        "/users/{id}": {
             "get": {
                 "description": "Return a single user using their ID",
                 "consumes": [
@@ -230,7 +244,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/users.User"
                         }
                     }
                 }
@@ -265,65 +279,10 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/users": {
-            "get": {
-                "description": "This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Lists all users in the database.",
-                "operationId": "GetUsers",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
-        "handler.postparams": {
-            "type": "object",
-            "properties": {
-                "author_id": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.userparams": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Post": {
+        "posts.Post": {
             "type": "object",
             "properties": {
                 "author_id": {
@@ -346,7 +305,21 @@ const docTemplate = `{
                 }
             }
         },
-        "models.User": {
+        "posts.postparams": {
+            "type": "object",
+            "properties": {
+                "author_id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "users.User": {
             "type": "object",
             "properties": {
                 "api_key": {
@@ -374,6 +347,23 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "users.userparams": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`
@@ -382,7 +372,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.1",
 	Host:             "localhost:8000",
-	BasePath:         "/api/v1",
+	BasePath:         "/v1",
 	Schemes:          []string{"http", "https"},
 	Title:            "Plusone Someone API",
 	Description:      "A simple API to create a message and give someone a plusone.",

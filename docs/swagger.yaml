@@ -1,26 +1,6 @@
-basePath: /api/v1
+basePath: /v1
 definitions:
-  handler.postparams:
-    properties:
-      author_id:
-        type: string
-      message:
-        type: string
-      user_id:
-        type: string
-    type: object
-  handler.userparams:
-    properties:
-      email:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      username:
-        type: string
-    type: object
-  models.Post:
+  posts.Post:
     properties:
       author_id:
         type: string
@@ -35,7 +15,16 @@ definitions:
       user_id:
         type: string
     type: object
-  models.User:
+  posts.postparams:
+    properties:
+      author_id:
+        type: string
+      message:
+        type: string
+      user_id:
+        type: string
+    type: object
+  users.User:
     properties:
       api_key:
         type: string
@@ -54,6 +43,17 @@ definitions:
       username:
         type: string
     type: object
+  users.userparams:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -62,6 +62,21 @@ info:
   version: "0.1"
 paths:
   /posts:
+    get:
+      consumes:
+      - application/json
+      description: Returns every post in the database
+      operationId: GetAllPosts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/posts.Post'
+      summary: Get all posts
+      tags:
+      - posts
     post:
       consumes:
       - application/json
@@ -74,14 +89,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/handler.postparams'
+          $ref: '#/definitions/posts.postparams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Post'
+            $ref: '#/definitions/posts.Post'
       summary: Create a post to plusone someone
       tags:
       - posts
@@ -120,29 +135,26 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Post'
+            $ref: '#/definitions/posts.Post'
       summary: Get a Post
       tags:
       - posts
-  /user:
+  /users:
     get:
       consumes:
       - application/json
-      description: Can search using username, email or name
-      operationId: GetUser
-      parameters:
-      - description: username, email, name
-        in: query
-        name: search
-        type: string
+      description: This will show all users that have been stored in the local DB.These
+        users would have been synced on start up of the application. If not some default
+        users would have been generated for testing.
+      operationId: GetUsers
       produces:
       - application/json
       responses:
         "200":
-          description: no search, no user
+          description: OK
           schema:
-            type: string
-      summary: Search for a User account
+            $ref: '#/definitions/users.User'
+      summary: Lists all users in the database.
       tags:
       - user
     post:
@@ -156,18 +168,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/handler.userparams'
+          $ref: '#/definitions/users.userparams'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/users.User'
       summary: Create a User account
       tags:
       - user
-  /user/{id}:
+  /users/{id}:
     delete:
       consumes:
       - application/json
@@ -204,11 +216,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/users.User'
       summary: Return a user by ID
       tags:
       - user
-  /user/post/{id}:
+  /users/post/{id}:
     get:
       consumes:
       - application/json
@@ -225,24 +237,6 @@ paths:
         "200":
           description: OK
       summary: Get all posts created by a user
-      tags:
-      - user
-  /users:
-    get:
-      consumes:
-      - application/json
-      description: This will show all users that have been stored in the local DB.These
-        users would have been synced on start up of the application. If not some default
-        users would have been generated for testing.
-      operationId: GetUsers
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.User'
-      summary: Lists all users in the database.
       tags:
       - user
 schemes:
