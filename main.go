@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	_ "github.com/datahattrick/plusone_someone/docs"
 	"github.com/datahattrick/plusone_someone/internal/http"
 	"github.com/datahattrick/plusone_someone/internal/logger"
@@ -18,11 +20,22 @@ func main() {
 	l := logger.New("goapp", "v1.0.0", 1)
 	logger.UpdateDefaultLogger(l)
 
+	cfg := utils.Config{}
+
 	//Read config this will generate defaults if fail
-	utils.LoadDotEnvFile()
+	err := utils.LoadDotEnvFile(&cfg)
+	if err != nil {
+		log.Fatal("Need settings", err)
+	}
 	// Connect to the database
 	utils.ConnectDB()
 
+	// LDAP Scrape
+	err = utils.LDAPStartTLS(&cfg)
+	if err != nil {
+		log.Println("Failed to connect to LDAP server and gather users", err)
+	}
+
 	//startServer
-	http.StartServer()
+	http.StartServer(&cfg)
 }
