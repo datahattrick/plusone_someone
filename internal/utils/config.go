@@ -14,7 +14,10 @@ type Config struct {
 		Port string `envconfig:"PORT"`
 	}
 	LDAP struct {
-		Host string `envconfig:"LDAP_ENDPOINT"`
+		Host      string `envconfig:"LDAP_ENDPOINT"`
+		Bind      string `envconfig:"LDAP_BIND_ACCOUNT"`
+		Password  string `envconfig:"LDAP_BIND_PASSWORD"`
+		UserGroup string `envconfig:"LDAP_USER_GROUP"`
 	}
 }
 
