@@ -3,6 +3,7 @@ module github.com/datahattrick/plusone_someone
 go 1.20
 
 require (
+	github.com/brianvoe/gofakeit/v6 v6.23.0
 	github.com/go-ldap/ldap/v3 v3.4.5
 	github.com/gofiber/fiber/v2 v2.48.0
 	github.com/gofiber/swagger v0.1.12

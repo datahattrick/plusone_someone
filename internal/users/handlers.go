@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type userparams struct {
+type Userparams struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Username  string `json:"username"`
@@ -23,11 +23,11 @@ type userparams struct {
 // @Description	Creates a user account returns the account details
 // @Accept			json
 // @Produce		json
-// @Param			request	body		userparams	true	"User parameters"
+// @Param			request	body		Userparams	true	"User parameters"
 // @Success		200		{object}	User{}
 // @Router			/users [post]
 func CreateUser(c *fiber.Ctx) error {
-	params := new(userparams)
+	params := new(Userparams)
 
 	if err := c.BodyParser(params); err != nil {
 		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to create user", err)
