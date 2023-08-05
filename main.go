@@ -9,6 +9,7 @@ import (
 	_ "github.com/datahattrick/plusone_someone/docs"
 	"github.com/datahattrick/plusone_someone/internal/http"
 	"github.com/datahattrick/plusone_someone/internal/logger"
+	"github.com/datahattrick/plusone_someone/internal/users"
 	"github.com/datahattrick/plusone_someone/internal/utils"
 )
 
@@ -24,6 +25,7 @@ func main() {
 	logger.UpdateDefaultLogger(l)
 
 	cfg := utils.Config{}
+	utils.Validator()
 
 	//Read config this will generate defaults if fail
 	err := utils.LoadDotEnvFile(&cfg)
@@ -32,14 +34,6 @@ func main() {
 	}
 	// Connect to the database
 	utils.ConnectDB()
-
-	// LDAP Scrape don't wait for it
-	go func() {
-		err = utils.LDAPStartTLS(&cfg)
-		if err != nil {
-			log.Println("Failed to connect to LDAP server and gather users", err)
-		}
-	}()
 
 	server := http.NewServerHTTP(&cfg)
 
@@ -50,6 +44,15 @@ func main() {
 	// Start server in seperate go routine
 	go func() {
 		server.Start(&cfg)
+	}()
+
+	// LDAP Scrape don't wait for it
+	go func() {
+		sr, err := utils.LDAPStartTLS(&cfg)
+		if err != nil {
+			log.Println("Failed to connect to LDAP server and gather users", err)
+		}
+		users.CreateUsersFromLDAP(sr, &cfg)
 	}()
 
 	// recieving server shutdown signal

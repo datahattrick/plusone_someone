@@ -14,11 +14,15 @@ type Config struct {
 		Port string `envconfig:"PORT"`
 	}
 	LDAP struct {
-		Host      string   `envconfig:"LDAP_ENDPOINT"`
-		Bind      string   `envconfig:"LDAP_BIND_ACCOUNT"`
-		Password  string   `envconfig:"LDAP_BIND_PASSWORD"`
-		UserGroup string   `envconfig:"LDAP_USER_GROUP"`
-		Attribute []string `envconfig:"LDAP_USER_ATTRIBUTES"`
+		Host          string   `envconfig:"LDAP_ENDPOINT"`
+		Bind          string   `envconfig:"LDAP_BIND_ACCOUNT"`
+		Password      string   `envconfig:"LDAP_BIND_PASSWORD"`
+		UserGroup     string   `envconfig:"LDAP_USER_GROUP"`
+		Attribute     []string `envconfig:"LDAP_USER_ATTRIBUTES"`
+		FirstNameAttr string   `envconfig:"LDAP_USER_FIRSTNAME"`
+		LastNameAttr  string   `envconfig:"LDAP_USER_LASTNAME"`
+		EmailAttr     string   `envconfig:"LDAP_USER_EMAIL"`
+		UsernameAttr  string   `envconfig:"LDAP_USER_USERNAME"`
 	}
 }
 
