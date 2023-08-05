@@ -2,6 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	_ "github.com/datahattrick/plusone_someone/docs"
 	"github.com/datahattrick/plusone_someone/internal/http"
@@ -30,12 +33,32 @@ func main() {
 	// Connect to the database
 	utils.ConnectDB()
 
-	// LDAP Scrape
-	err = utils.LDAPStartTLS(&cfg)
-	if err != nil {
-		log.Println("Failed to connect to LDAP server and gather users", err)
+	// LDAP Scrape don't wait for it
+	go func() {
+		err = utils.LDAPStartTLS(&cfg)
+		if err != nil {
+			log.Println("Failed to connect to LDAP server and gather users", err)
+		}
+	}()
+
+	server := http.NewServerHTTP(&cfg)
+
+	// Channel for sending server shutdown signal
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
+
+	// Start server in seperate go routine
+	go func() {
+		server.Start(&cfg)
+	}()
+
+	// recieving server shutdown signal
+	sig := <-signalCh
+	log.Println("Received signal : ", sig)
+
+	// Graceful shutdown
+	if err := server.ShutDown(); err != nil {
+		log.Fatalf("Server shutdown failed: %v\n", err)
 	}
 
-	//startServer
-	http.StartServer(&cfg)
 }

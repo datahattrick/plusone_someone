@@ -32,7 +32,7 @@ func LDAPStartTLS(cfg *Config) error {
 	}
 
 	log.Println("LDAP: Searching for :", cfg.LDAP.Attribute)
-	sr, err := searchRequest(l, cfg)
+	_, err = searchRequest(l, cfg)
 	if err != nil {
 		return err
 	}

@@ -7,6 +7,10 @@ import (
 	"github.com/gofiber/swagger"
 )
 
+type Api struct {
+	api *fiber.Router
+}
+
 // Manage api endpoints
 
 func Swagger(app *fiber.App) {
