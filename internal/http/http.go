@@ -20,7 +20,7 @@ func NewServerHTTP(cfg *utils.Config) *ServerHTTP {
 	app.Use(logger.New())
 	app.Use(recover.New())
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://" + cfg.Server.Host + ":" + cfg.Server.Port + ",http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000",
+		AllowOrigins: "http://" + cfg.Server.Host + ":" + cfg.Server.Port + ",http://localhost:5173,http://localhost:8000,http://127.0.0.1:8000",
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
