@@ -70,16 +70,29 @@ func GetUserByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(DatabaseUserToUser(user))
 }
 
-// @id				GetUsers
-// @tags			user
-// @Summary		Lists all users in the database.
-// @Description	This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.
-// @Accept			json
-// @Produce		json
-// @Success		200	{object}	User{}
-// @Router			/users [get]
 func GetAllUsers(c *fiber.Ctx) error {
 	user, err := utils.Database.DB.GetAllUsers(c.Context())
+	if err != nil {
+		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to get list of users", err)
+	}
+	return c.Status(fiber.StatusOK).JSON(DatabaseUsersToUsers(user))
+}
+
+// @id				GetUserBySearch
+// @tags			user
+// @Summary		Finds users
+// @Description	This will conduct a fuzzy search for a user by checking both first_name, last_name, email and username
+// @Accept			json
+// @Produce		json
+// @Param	search query string false "User"
+// @Success		200	{object}	[]User{}
+// @Router			/users [get]
+func GetUserBySearch(c *fiber.Ctx) error {
+	search := c.Query("search")
+	if search == "" {
+		GetAllUsers(c)
+	}
+	user, err := utils.Database.DB.GetUserBySearch(c.Context(), "%"+search+"%")
 	if err != nil {
 		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to get list of users", err)
 	}

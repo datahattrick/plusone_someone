@@ -134,7 +134,7 @@ const docTemplate = `{
         },
         "/users": {
             "get": {
-                "description": "This will show all users that have been stored in the local DB.These users would have been synced on start up of the application. If not some default users would have been generated for testing.",
+                "description": "This will conduct a fuzzy search for a user by checking both first_name, last_name, email and username",
                 "consumes": [
                     "application/json"
                 ],
@@ -144,13 +144,24 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Lists all users in the database.",
-                "operationId": "GetUsers",
+                "summary": "Finds users",
+                "operationId": "GetUserBySearch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/users.User"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/users.User"
+                            }
                         }
                     }
                 }
@@ -175,7 +186,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users.userparams"
+                            "$ref": "#/definitions/users.Userparams"
                         }
                     }
                 ],
@@ -348,8 +359,14 @@ const docTemplate = `{
                 }
             }
         },
-        "users.userparams": {
+        "users.Userparams": {
             "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "username"
+            ],
             "properties": {
                 "email": {
                     "type": "string"

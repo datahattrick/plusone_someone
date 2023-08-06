@@ -43,7 +43,7 @@ definitions:
       username:
         type: string
     type: object
-  users.userparams:
+  users.Userparams:
     properties:
       email:
         type: string
@@ -53,6 +53,11 @@ definitions:
         type: string
       username:
         type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - username
     type: object
 host: localhost:8000
 info:
@@ -143,18 +148,24 @@ paths:
     get:
       consumes:
       - application/json
-      description: This will show all users that have been stored in the local DB.These
-        users would have been synced on start up of the application. If not some default
-        users would have been generated for testing.
-      operationId: GetUsers
+      description: This will conduct a fuzzy search for a user by checking both first_name,
+        last_name, email and username
+      operationId: GetUserBySearch
+      parameters:
+      - description: User
+        in: query
+        name: search
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/users.User'
-      summary: Lists all users in the database.
+            items:
+              $ref: '#/definitions/users.User'
+            type: array
+      summary: Finds users
       tags:
       - user
     post:
@@ -168,7 +179,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/users.userparams'
+          $ref: '#/definitions/users.Userparams'
       produces:
       - application/json
       responses:

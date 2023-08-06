@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import Form from "./Form";
 
 function App() {
 
@@ -32,11 +33,7 @@ function App() {
     <>
     <div className="flex justify-center pt-5">
     <div className="">
-      <div className="pb-3">
-      <input type="text" placeholder="Find user" className="input input-bordered w-full max-w-xs mb-4" ref={user} />
-      <textarea className="textarea textarea-bordered textarea-md w-full max-w-xs" placeholder="Message" ref={message}></textarea>
-      </div>
-      <button className="btn btn-primary" onClick={addMessage}>Add Message</button>
+      <Form />
       </div>
       </div>
     </>

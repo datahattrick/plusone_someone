@@ -7,10 +7,6 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-type Api struct {
-	api *fiber.Router
-}
-
 // Manage api endpoints
 
 func Swagger(app *fiber.App) {
@@ -31,7 +27,7 @@ func V1(app *fiber.App) {
 }
 
 func usersRouter(app fiber.Router) {
-	app.Get("/", users.GetAllUsers)
+	app.Get("/", users.GetUserBySearch)
 	app.Get("/:id", users.GetUserByID)
 	app.Post("/", users.CreateUser)
 	app.Delete("/:id", users.DeleteUser)
