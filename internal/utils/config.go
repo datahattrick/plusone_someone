@@ -24,6 +24,9 @@ type Config struct {
 		EmailAttr     string   `envconfig:"LDAP_USER_EMAIL"`
 		UsernameAttr  string   `envconfig:"LDAP_USER_USERNAME"`
 	}
+	SMTP struct {
+		Host string `envconfig:"SMTP_HOST"`
+	}
 }
 
 func LoadDotEnvFile(cfg *Config) error {

@@ -30,11 +30,22 @@ const docTemplate = `{
                 ],
                 "summary": "Get all posts",
                 "operationId": "GetAllPosts",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Author ID",
+                        "name": "author",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/posts.Post"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/posts.Post"
+                            }
                         }
                     }
                 }
@@ -196,35 +207,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/users.User"
                         }
-                    }
-                }
-            }
-        },
-        "/users/post/{id}": {
-            "get": {
-                "description": "Get all the posts created using a users ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Get all posts created by a user",
-                "operationId": "GetPostByUser",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
                     }
                 }
             }

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/datahattrick/plusone_someone/internal/database"
-	"github.com/datahattrick/plusone_someone/internal/posts"
 	"github.com/datahattrick/plusone_someone/internal/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -114,25 +113,4 @@ func DeleteUser(c *fiber.Ctx) error {
 		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to delete user: "+c.Params("id"), err)
 	}
 	return c.SendStatus(fiber.StatusOK)
-}
-
-// @id				GetPostByUser
-// @tags			user
-// @Summary		Get all posts created by a user
-// @Description	Get all the posts created using a users ID
-// @Accept			json
-// @Produce		json
-// @Param			id	path	string	false	"User ID"
-// @Success		200
-// @Router			/users/post/{id} [get]
-func GetPostByUser(c *fiber.Ctx) error {
-	id := c.Params("id")
-	post, err := utils.Database.DB.GetPostsByUser(c.Context(), id)
-	if err != nil {
-		post, err = utils.Database.DB.GetPostsByAuthor(c.Context(), id)
-		if err != nil {
-			return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find a post by user: "+id, err)
-		}
-	}
-	return c.Status(fiber.StatusOK).JSON(posts.DatabasePostsToPosts(post))
 }

@@ -72,13 +72,20 @@ paths:
       - application/json
       description: Returns every post in the database
       operationId: GetAllPosts
+      parameters:
+      - description: Author ID
+        in: query
+        name: author
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/posts.Post'
+            items:
+              $ref: '#/definitions/posts.Post'
+            type: array
       summary: Get all posts
       tags:
       - posts
@@ -229,25 +236,6 @@ paths:
           schema:
             $ref: '#/definitions/users.User'
       summary: Return a user by ID
-      tags:
-      - user
-  /users/post/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Get all the posts created using a users ID
-      operationId: GetPostByUser
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-      summary: Get all posts created by a user
       tags:
       - user
 schemes:

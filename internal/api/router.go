@@ -31,7 +31,6 @@ func usersRouter(app fiber.Router) {
 	app.Get("/:id", users.GetUserByID)
 	app.Post("/", users.CreateUser)
 	app.Delete("/:id", users.DeleteUser)
-	app.Get("/posts/:id", users.GetPostByUser)
 }
 
 func postsRouter(app fiber.Router) {

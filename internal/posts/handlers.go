@@ -1,6 +1,7 @@
 package posts
 
 import (
+	"errors"
 	"time"
 
 	"github.com/datahattrick/plusone_someone/internal/database"
@@ -38,6 +39,8 @@ func CreatePost(c *fiber.Ctx) error {
 		AuthorID:  params.AuthorID,
 		UserID:    params.UserID,
 	})
+
+	go SendEmailToPostsRecipient(DatabasePostToPost(posts))
 
 	if err != nil {
 		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Couldn't create post", err)
@@ -89,13 +92,33 @@ func GetPostByID(c *fiber.Ctx) error {
 // @Description	Returns every post in the database
 // @Accept			json
 // @Produce		json
-// @Success		200	{object}	posts.Post{}
+// @Param			author	query	string	false	"Author ID"
+// @Success		200	{object}	[]posts.Post{}
 // @Router			/posts [get]
 func GetAllPosts(c *fiber.Ctx) error {
-	posts, err := utils.Database.DB.GetAllPosts(c.Context())
-	if err != nil {
-		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find any posts", err)
+	search := c.Query("author")
+	if search == "" {
+		posts, err := utils.Database.DB.GetAllPosts(c.Context())
+		if err != nil {
+			return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find any posts", err)
+		}
+		return c.Status(fiber.StatusOK).JSON(DatabasePostsToPosts(posts))
 	}
-
+	posts, err := GetPostByUser(c, search)
+	if err != nil {
+		return utils.SendErrorMessage(c, fiber.StatusBadRequest, "Unable to find a post by user: "+search, err)
+	}
 	return c.Status(fiber.StatusOK).JSON(DatabasePostsToPosts(posts))
+
+}
+
+func GetPostByUser(c *fiber.Ctx, search string) ([]database.Post, error) {
+	if search != "author" {
+		return []database.Post{}, errors.New("Please enter a correct search parameter")
+	}
+	post, err := utils.Database.DB.GetPostsByAuthor(c.Context(), search)
+	if err != nil {
+		return []database.Post{}, err
+	}
+	return post, nil
 }
